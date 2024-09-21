@@ -1,6 +1,6 @@
 #include "DescroptorHeap.h"
 
-using namespace D3D12Helper;
+using namespace d3d12helper;
 
 
 DescriptorHeap::DescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTOR_HEAP_TYPE type, UINT descriptorNum, bool isShaderVisiable) : mDescriptorSize(device->GetDescriptorHandleIncrementSize(type))

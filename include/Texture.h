@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include <d3d12.h>
 
+namespace d3d12helper {
 
 class Texture {
 public:
@@ -15,7 +16,7 @@ public:
         mUploader.Reset();
     }
 
-    Texture(ID3D12Resource *resource, ID3D12Resource *uploader = nullptr); 
+    Texture(ID3D12Resource *resource, ID3D12Resource *uploader = nullptr);
     Texture(ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
             std::wstring path, bool isCube = false);
     Texture(ID3D12Device *device,
@@ -39,3 +40,4 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mTexture;
     Microsoft::WRL::ComPtr<ID3D12Resource> mUploader;
 };
+} // namespace d3d12helper

@@ -1,6 +1,6 @@
 #include "DefaultBuffer.h"
 
-using namespace D3D12Helper;
+using namespace d3d12helper;
 
 DefaultBuffer::DefaultBuffer(ID3D12Device *device, ID3D12GraphicsCommandList *commandList, const void *data, UINT64 byteSize)
 {

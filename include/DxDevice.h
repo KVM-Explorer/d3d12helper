@@ -6,7 +6,7 @@
 #include <dxgi1_6.h>
 
 
-namespace D3D12Helper {
+namespace d3d12helper {
 class DxDevice {
 public:
   static auto GetDeviceInfo(IDXGIFactory6 *factory)

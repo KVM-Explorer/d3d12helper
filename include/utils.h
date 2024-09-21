@@ -6,7 +6,7 @@
 #include <wrl/client.h>
 #include <format>
 
-namespace D3D12Helper {
+namespace d3d12helper {
 
 using Microsoft::WRL::ComPtr;
 

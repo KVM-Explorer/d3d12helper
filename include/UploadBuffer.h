@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include <d3d12.h>
 #include "d3dx12.h"
-namespace D3D12Helper {
+namespace d3d12helper {
 template <typename T> class UploadBuffer {
 public:
   UploadBuffer(ID3D12Device *device, UINT elementCount, bool isConstantBuffer)

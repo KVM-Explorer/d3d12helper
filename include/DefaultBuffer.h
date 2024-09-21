@@ -4,7 +4,7 @@
 #include <d3d12.h>
 
 
-namespace D3D12Helper {
+namespace d3d12helper {
 class DefaultBuffer {
 public:
   DefaultBuffer(const DefaultBuffer &) = delete;

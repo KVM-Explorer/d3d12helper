@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "d3dx12.h"
 #include "DDSTextureLoader12.h"
-using namespace D3D12Helper;
+using namespace d3d12helper;
 
 Texture::Texture(ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
                  std::wstring path, bool isCube)
@@ -86,11 +86,10 @@ Texture::Texture(ID3D12Device *device,
                                                       initState,
                                                       nullptr,
                                                       IID_PPV_ARGS(&mTexture)));
- 
     }
 }
 
-Texture::Texture(ID3D12Resource *resource, ID3D12Resource *uploader)
-    : mTexture(resource), mUploader(uploader)
+Texture::Texture(ID3D12Resource *resource, ID3D12Resource *uploader) :
+    mTexture(resource), mUploader(uploader)
 {
 }

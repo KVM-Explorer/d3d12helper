@@ -3,7 +3,7 @@
 #include <d3d12.h>
 #include "Utils.h"
 
-namespace D3D12Helper {
+namespace d3d12helper {
 class DescriptorHeap {
 public:
     DescriptorHeap(const DescriptorHeap &) = delete;
