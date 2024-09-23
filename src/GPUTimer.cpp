@@ -1,85 +1,10 @@
-//*********************************************************
-//
-// Copyright 2020 Intel Corporation
-//
-// Permission is hereby granted, free of charge, to any
-// person obtaining a copy of this software and associated
-// documentation files(the "Software"), to deal in the Software
-// without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to
-// whom the Software is furnished to do so, subject to the
-// following conditions :
-// The above copyright notice and this permission notice shall
-// be included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
-//
-//*********************************************************
-#pragma once
+#include "GPUTimer.h"
 
-#include <cstdint>
-#include <vector>
-#include <string>
-#include <utility>
-
-#include "d3dx12.h"
-#include "Utils.h"
-namespace d3d12helper {
-enum class GpuTimers {
-    FPS,
-    stage1,
-    stage3,
-    NumTimers
-};
-
-class D3D12GpuTimer {
-public:
-    D3D12GpuTimer(
-        ID3D12Device *in_pDevice,             // required to create internal resources
-        ID3D12CommandQueue *in_pCommandQueue, // required for frequency query
-        std::uint32_t in_numTimers, std::uint32_t in_averageOver = 20);
-
-    void SetTimerName(std::uint32_t in_index, const std::string &in_name);
-
-    void BeginTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index);
-    void EndTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index);
-
-    void ResolveAllTimers(ID3D12GraphicsCommandList *in_pCommandList);
-
-    typedef std::vector<std::pair<float, std::string>> TimeArray;
-    const TimeArray &GetTimes() const
-    {
-        return m_times;
-    }
-    ~D3D12GpuTimer()
-    {
-        m_buffer = nullptr;
-        m_heap = nullptr;
-    };
-
-private:
-    std::uint32_t m_numTimers; // how many we expose. we need double to record begin + end
-    std::uint32_t m_totalTimers;
-    TimeArray m_times;
-    std::uint64_t m_gpuFrequency;
-    const std::uint32_t m_averageOver;
-
-    Microsoft::WRL::ComPtr<ID3D12QueryHeap> m_heap;
-    Microsoft::WRL::ComPtr<ID3D12Resource> m_buffer;
-    Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue;
-};
+using namespace d3d12helper;
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline D3D12GpuTimer::D3D12GpuTimer(
+D3D12GpuTimer::D3D12GpuTimer(
     ID3D12Device *in_pDevice,
     ID3D12CommandQueue *in_pCommandQueue,
     std::uint32_t in_numTimers,
@@ -117,7 +42,7 @@ inline D3D12GpuTimer::D3D12GpuTimer(
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline void D3D12GpuTimer::SetTimerName(std::uint32_t in_index, const std::string &in_name)
+void D3D12GpuTimer::SetTimerName(std::uint32_t in_index, const std::string &in_name)
 {
     if (in_index < m_times.size()) {
         m_times[in_index].second = in_name;
@@ -126,7 +51,7 @@ inline void D3D12GpuTimer::SetTimerName(std::uint32_t in_index, const std::strin
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline void D3D12GpuTimer::BeginTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index)
+void D3D12GpuTimer::BeginTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index)
 {
     const UINT index = in_index * 2;
     in_pCommandList->EndQuery(m_heap.Get(), D3D12_QUERY_TYPE_TIMESTAMP, index);
@@ -134,7 +59,7 @@ inline void D3D12GpuTimer::BeginTimer(ID3D12GraphicsCommandList *in_pCommandList
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline void D3D12GpuTimer::EndTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index)
+void D3D12GpuTimer::EndTimer(ID3D12GraphicsCommandList *in_pCommandList, std::uint32_t in_index)
 {
     const UINT index = (in_index * 2) + 1;
     in_pCommandList->EndQuery(m_heap.Get(), D3D12_QUERY_TYPE_TIMESTAMP, index);
@@ -142,7 +67,7 @@ inline void D3D12GpuTimer::EndTimer(ID3D12GraphicsCommandList *in_pCommandList, 
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-inline void D3D12GpuTimer::ResolveAllTimers(ID3D12GraphicsCommandList *in_pCommandList)
+void D3D12GpuTimer::ResolveAllTimers(ID3D12GraphicsCommandList *in_pCommandList)
 {
     in_pCommandList->ResolveQueryData(m_heap.Get(), D3D12_QUERY_TYPE_TIMESTAMP, 0, m_totalTimers, m_buffer.Get(), 0);
     // FIXME? gpu frequency can fluctuate over time. Does this query reflect current clock rate?
@@ -169,4 +94,3 @@ inline void D3D12GpuTimer::ResolveAllTimers(ID3D12GraphicsCommandList *in_pComma
     // Unmap with an empty range (written range).
     m_buffer->Unmap(0, nullptr);
 }
-} // namespace d3d12helper
