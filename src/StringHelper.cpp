@@ -1,4 +1,4 @@
-#include "StringHelper.h"
+#include "d3d12helper/StringHelper.h"
 #include <codecvt>
 #include <locale>
 #include <string>
@@ -7,14 +7,14 @@ namespace d3d12helper {
 
 std::wstring string2wstring(const std::string &str)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.from_bytes(str);
+    std::wstring wstr(str.begin(), str.end());
+    return wstr;
 }
 
 std::string wstring2string(const std::wstring &wstr)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.to_bytes(wstr);
+    std::string str(wstr.begin(), wstr.end());
+    return str;
 }
 
 } // namespace d3d12helper

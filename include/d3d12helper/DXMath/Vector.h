@@ -12,8 +12,8 @@
 //
 
 #pragma once
-#include "DXMath/Scalar.h"
-#include "DXMath/Swizzle.h"
+#include "d3d12helper/DXMath/Scalar.h"
+#include "d3d12helper/DXMath/Swizzle.h"
 using namespace DirectX;
 namespace Math {
 struct bool4;

@@ -17,10 +17,10 @@ typedef DirectX::XMFLOAT3X3 float3x3;
 typedef DirectX::XMFLOAT3X4 float3x4;
 typedef DirectX::XMFLOAT4X3 float4x3;
 
-#include "DXMath/Vector.h"
-#include "DXMath/Quaternion.h"
-#include <DXMath/Matrix4.h>
-#include <DXMath/Matrix3.h>
+#include "d3d12helper/DXMath/Vector.h"
+#include "d3d12helper/DXMath/Quaternion.h"
+#include <d3d12helper/DXMath/Matrix4.h>
+#include <d3d12helper/DXMath/Matrix3.h>
 #include <memory>
 #include <initializer_list>
 #include <functional>

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <cstdint>
-#include <DXMath/DXMath.h>
+#include <d3d12helper/DXMath/DXMath.h>
 
 class MathHelper {
 public:

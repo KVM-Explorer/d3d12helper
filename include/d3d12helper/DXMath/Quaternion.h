@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "DXMath/Vector.h"
+#include "d3d12helper/DXMath/Vector.h"
 
 namespace Math {
 class alignas(16) Quaternion {

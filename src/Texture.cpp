@@ -1,6 +1,6 @@
-#include "Texture.h"
-#include "d3dx12.h"
-#include "DDSTextureLoader12.h"
+#include "d3d12helper/Texture.h"
+#include "d3d12helper/d3dx12.h"
+#include "d3d12helper/DDSTextureLoader12.h"
 using namespace d3d12helper;
 
 Texture::Texture(ID3D12Device *device, ID3D12GraphicsCommandList *commandList,

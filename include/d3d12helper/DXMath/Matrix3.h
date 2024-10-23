@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <DXMath/Quaternion.h>
+#include <d3d12helper/DXMath/Quaternion.h>
 
 namespace Math {
 // Represents a 3x3 matrix while occuping a 4x4 memory footprint.  The unused row and column are undefined but implicitly

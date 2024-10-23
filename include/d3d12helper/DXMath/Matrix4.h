@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "DXMath/Matrix3.h"
+#include "d3d12helper/DXMath/Matrix3.h"
 namespace Math
 {
 	class alignas(16) Matrix4

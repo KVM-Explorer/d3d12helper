@@ -1,4 +1,4 @@
-#include "DXMath/DXMath.h"
+#include "d3d12helper/DXMath/DXMath.h"
 Math::Matrix4 XM_CALLCONV GetTransformMatrix(const Math::Vector3& right, const Math::Vector3& up, const Math::Vector3& forward, const Math::Vector3& position) noexcept {
 	Math::Matrix4 target;
 	target[0] = right;
