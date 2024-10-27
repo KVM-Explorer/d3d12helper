@@ -26,6 +26,10 @@ public:
             bool isDepthTexture = false,
             D3D12_HEAP_FLAGS heapFlags = D3D12_HEAP_FLAG_NONE,
             D3D12_RESOURCE_STATES initState = D3D12_RESOURCE_STATE_GENERIC_READ);
+    Texture(ID3D12Device *device,
+            D3D12_RESOURCE_DESC desc,
+            D3D12_HEAP_PROPERTIES heapProperties,
+            D3D12_RESOURCE_STATES initState = D3D12_RESOURCE_STATE_GENERIC_READ);
 
     [[nodiscard]] ID3D12Resource *Resource() const
     {
@@ -35,6 +39,8 @@ public:
     {
         return mTexture->GetDesc();
     }
+
+    auto GetClearColor() -> D3D12_CLEAR_VALUE;
 
 private:
     Microsoft::WRL::ComPtr<ID3D12Resource> mTexture;

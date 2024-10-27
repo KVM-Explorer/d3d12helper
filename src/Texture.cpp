@@ -1,6 +1,7 @@
 #include "d3d12helper/Texture.h"
 #include "d3d12helper/d3dx12.h"
 #include "d3d12helper/DDSTextureLoader12.h"
+#include "DirectXColors.h"
 using namespace d3d12helper;
 
 Texture::Texture(ID3D12Device *device, ID3D12GraphicsCommandList *commandList,
@@ -60,36 +61,48 @@ Texture::Texture(ID3D12Device *device,
                                                                       flags);
     if (flags & D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER)
         resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-    float clearColor[4] = {0, 0, 0, 1.0F};
-    D3D12_CLEAR_VALUE clearValue;
-    clearValue.Format = format;
-    if (!isDepthTexture) {
-        clearValue.Color[0] = clearColor[0];
-        clearValue.Color[1] = clearColor[1];
-        clearValue.Color[2] = clearColor[2];
-        clearValue.Color[3] = clearColor[3];
-    } else {
-        clearValue.DepthStencil.Depth = 1.0F;
-        clearValue.DepthStencil.Stencil = 0.0F;
-    }
-    if ((flags & D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET) || (flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)) {
-        ThrowIfFailed(device->CreateCommittedResource(&heapProps,
-                                                      D3D12_HEAP_FLAG_NONE,
-                                                      &resourceDesc,
-                                                      initState,
-                                                      &clearValue,
-                                                      IID_PPV_ARGS(&mTexture)));
-    } else {
-        ThrowIfFailed(device->CreateCommittedResource(&heapProps,
-                                                      heapFlags,
-                                                      &resourceDesc,
-                                                      initState,
-                                                      nullptr,
-                                                      IID_PPV_ARGS(&mTexture)));
-    }
+
+    Texture(device, resourceDesc, heapProps, initState);
 }
 
 Texture::Texture(ID3D12Resource *resource, ID3D12Resource *uploader) :
     mTexture(resource), mUploader(uploader)
 {
+}
+
+Texture::Texture(ID3D12Device *device,
+                 D3D12_RESOURCE_DESC desc,
+                 D3D12_HEAP_PROPERTIES heapProperties,
+                 D3D12_RESOURCE_STATES initState)
+{
+    if (desc.Flags == D3D12_RESOURCE_FLAG_NONE) {
+        ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
+                                                      D3D12_HEAP_FLAG_NONE,
+                                                      &desc,
+                                                      initState,
+                                                      nullptr,
+                                                      IID_PPV_ARGS(&mTexture)));
+    } else {
+        // default render target
+        CD3DX12_CLEAR_VALUE clearValue(desc.Format, DirectX::Colors::SteelBlue);
+
+        // depth stencil
+        if (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) {
+            clearValue.Format = desc.Format;
+            clearValue.DepthStencil.Depth = 1.0F;
+            clearValue.DepthStencil.Stencil = 0.0F;
+        }
+
+        ThrowIfFailed(device->CreateCommittedResource(&heapProperties,
+                                                      D3D12_HEAP_FLAG_NONE,
+                                                      &desc,
+                                                      initState,
+                                                      &clearValue,
+                                                      IID_PPV_ARGS(&mTexture)));
+    }
+}
+
+auto Texture::GetClearColor() -> D3D12_CLEAR_VALUE
+{
+    return CD3DX12_CLEAR_VALUE(mTexture->GetDesc().Format, DirectX::Colors::SteelBlue);
 }

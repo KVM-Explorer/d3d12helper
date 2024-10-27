@@ -21,6 +21,7 @@ using IDXGIOutputPtr = Microsoft::WRL::ComPtr<IDXGIOutput>;
 using IDXGIResourcePtr = Microsoft::WRL::ComPtr<IDXGIResource>;
 using IDXGISurface1Ptr = Microsoft::WRL::ComPtr<IDXGISurface1>;
 using IDXGIFactory4Ptr = Microsoft::WRL::ComPtr<IDXGIFactory4>;
+using IDXGIFactory6Ptr = Microsoft::WRL::ComPtr<IDXGIFactory6>;
 using IDXGISwapChainPtr = Microsoft::WRL::ComPtr<IDXGISwapChain>;
 using IDXGISwapChain3Ptr = Microsoft::WRL::ComPtr<IDXGISwapChain3>;
 
