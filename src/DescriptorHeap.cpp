@@ -1,4 +1,5 @@
 #include "d3d12helper/DescroptorHeap.h"
+#include <cassert>
 
 using namespace d3d12helper;
 
@@ -22,6 +23,8 @@ DescriptorHeap::DescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTOR_HEAP_TYPE 
 
 uint32_t DescriptorHeap::AddRtvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_RENDER_TARGET_VIEW_DESC *rtvDesc)
 {
+    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
     D3D12_RENDER_TARGET_VIEW_DESC desc;
     if (rtvDesc == nullptr) {
         desc.Format = resource->GetDesc().Format;
@@ -38,6 +41,8 @@ uint32_t DescriptorHeap::AddRtvDescriptor(ID3D12Device *device, ID3D12Resource *
 
 uint32_t DescriptorHeap::AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_DEPTH_STENCIL_VIEW_DESC *dsvDesc)
 {
+    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
     D3D12_DEPTH_STENCIL_VIEW_DESC desc;
     if (dsvDesc == nullptr) {
         desc.Format = resource->GetDesc().Format;
@@ -54,6 +59,8 @@ uint32_t DescriptorHeap::AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *
 
 uint32_t DescriptorHeap::AddSrvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_SHADER_RESOURCE_VIEW_DESC *srvDesc)
 {
+    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
     D3D12_SHADER_RESOURCE_VIEW_DESC desc;
     if (srvDesc == nullptr) {
         desc.Format = resource->GetDesc().Format;
@@ -73,6 +80,8 @@ uint32_t DescriptorHeap::AddSrvDescriptor(ID3D12Device *device, ID3D12Resource *
 
 uint32_t DescriptorHeap::AddUavDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_UNORDERED_ACCESS_VIEW_DESC *uavDesc)
 {
+    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
     D3D12_UNORDERED_ACCESS_VIEW_DESC desc;
     if (uavDesc == nullptr) {
         desc.Format = resource->GetDesc().Format;
