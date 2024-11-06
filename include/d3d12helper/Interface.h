@@ -12,6 +12,7 @@ using IDXGIAdapterPtr = Microsoft::WRL::ComPtr<IDXGIAdapter>;
 using IDXGIAdapter1Ptr = Microsoft::WRL::ComPtr<IDXGIAdapter1>;
 using IDXGIDevicePtr = Microsoft::WRL::ComPtr<IDXGIDevice>;
 using IDXGIDevice1Ptr = Microsoft::WRL::ComPtr<IDXGIDevice1>;
+using IDXGIDevice4Ptr = Microsoft::WRL::ComPtr<IDXGIDevice4>;
 using IDXGIDeviceSubObjectPtr = Microsoft::WRL::ComPtr<IDXGIDeviceSubObject>;
 using IDXGIFactoryPtr = Microsoft::WRL::ComPtr<IDXGIFactory>;
 using IDXGIFactory1Ptr = Microsoft::WRL::ComPtr<IDXGIFactory1>;
