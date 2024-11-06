@@ -2,7 +2,7 @@
 #include "d3d12helper/d3dx12.h"
 #include "d3d12helper/Utils.h"
 #include <dxgi1_6.h>
-#include <iostream>
+#include "d3d12helper/Interface.h"
 class DxFactory {
 public:
     struct DeviceInfo {
@@ -23,8 +23,6 @@ public:
     {
         return m_factory.Get();
     }
-
-
 
     auto
     GetDeviceInfo() -> std::vector<DeviceInfo>
@@ -55,12 +53,12 @@ private:
 
 // debugController
 #ifdef D3D12HELPER_DEBUG
-        ID3D12DebugPtr debugController;
+        d3d12helper::ID3D12DebugPtr debugController;
         if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
             debugController->EnableDebugLayer();
         }
 
-        ID3D12Debug1Ptr debug1;
+        d3d12helper::ID3D12Debug1Ptr debug1;
         debugController->QueryInterface(IID_PPV_ARGS(&debug1));
         // debug1->SetEnableGPUBasedValidation(true);
 
@@ -75,4 +73,3 @@ private:
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_factory;
 };
 
-std::unique_ptr<DxFactory> DxFactory::instance = nullptr;

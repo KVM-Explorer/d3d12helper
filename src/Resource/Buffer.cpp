@@ -1,4 +1,3 @@
-#pragma once
 #include "d3d12helper/Resource/Buffer.h"
 #include "d3d12helper/Resource/BufferView.h"
 
