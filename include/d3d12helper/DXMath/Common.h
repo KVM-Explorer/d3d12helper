@@ -12,7 +12,7 @@
 //
 
 #pragma once
-
+#pragma warning(disable: 4166)
 #include <intrin.h>
 typedef uint32_t uint;
 #define INLINE __forceinline

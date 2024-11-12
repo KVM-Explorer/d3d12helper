@@ -21,8 +21,8 @@ public:
     {
         return D3D12_RESOURCE_STATE_GENERIC_READ;
     }
-    UploadBuffer(UploadBuffer &&) = default;
-    UploadBuffer(UploadBuffer const &) = delete;
+    UploadBuffer(UploadBuffer &&) = default; // Move constructor
+    UploadBuffer(UploadBuffer const &) = delete;  // Copy constructor
     // void DelayDispose(FrameResource *frameRes) const override;
 };
 
