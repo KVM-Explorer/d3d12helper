@@ -5,8 +5,8 @@ target("d3d12helper")
     if is_mode("release") then
         set_kind("static")
     else
-        set_kind("shared")
-        add_rules("utils.symbols.export_all", {export_classes = true})
+        set_kind("static")
+        -- add_rules("utils.symbols.export_all", {export_classes = true})
         add_defines("D3D12HELPER_DEBUG")
     end 
 

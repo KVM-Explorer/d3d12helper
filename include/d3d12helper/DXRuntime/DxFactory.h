@@ -3,6 +3,7 @@
 #include "d3d12helper/Utils.h"
 #include <dxgi1_6.h>
 #include "d3d12helper/Interface.h"
+namespace d3d12helper {
 class DxFactory {
 public:
     struct DeviceInfo {
@@ -10,13 +11,13 @@ public:
         std::wstring description;
     };
 
-    static DxFactory *GetInstance()
+    static std::shared_ptr<DxFactory> GetInstance()
     {
-        if (!instance) {
-            instance = std::make_unique<DxFactory>();
+        if (instance == nullptr) {
+            instance = std::make_shared<DxFactory>();
             instance->CreateFactory();
         }
-        return instance.get();
+        return instance;
     }
 
     auto GetFactory() -> IDXGIFactory6 *
@@ -24,8 +25,7 @@ public:
         return m_factory.Get();
     }
 
-    auto
-    GetDeviceInfo() -> std::vector<DeviceInfo>
+    auto GetDeviceInfo() -> std::vector<DeviceInfo>
     {
         UINT dxgiFactoryFlags = 0;
         Microsoft::WRL::ComPtr<IDXGIAdapter1> adapter;
@@ -47,6 +47,10 @@ public:
     }
 
 private:
+    // DxFactory() = default;
+    // ~DxFactory() = default;
+    // DxFactory(const DxFactory &) = delete;
+    // DxFactory &operator=(const DxFactory &) = delete;
     auto CreateFactory() -> void
     {
         UINT dxgiFactoryFlags = 0;
@@ -68,8 +72,8 @@ private:
         d3d12helper::ThrowIfFailed(CreateDXGIFactory2(0, IID_PPV_ARGS(&m_factory)));
     }
 
-private:
-    static std::unique_ptr<DxFactory> instance;
+    static inline std::shared_ptr<DxFactory> instance = nullptr;
     Microsoft::WRL::ComPtr<IDXGIFactory6> m_factory;
 };
 
+} // namespace d3d12helper
