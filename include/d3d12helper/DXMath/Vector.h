@@ -343,8 +343,9 @@ public:
 	INLINE void SetX(float x) noexcept { m_vec.m128_f32[0] = x; }
 	INLINE void SetY(float y) noexcept { m_vec.m128_f32[1] = y; }
 	INLINE void SetZ(float z) noexcept { m_vec.m128_f32[2] = z; }
-
+	static INLINE Vector3 Max() noexcept { return Vector3(FLT_MAX,FLT_MAX,FLT_MAX); }
 	INLINE Vector3 operator-() const noexcept { return Vector3(XMVectorNegate(m_vec)); }
+
 	INLINE Vector3 operator+(const Vector3& v2) const noexcept { return Vector3(XMVectorAdd(m_vec, v2)); }
 	INLINE Vector3 operator-(const Vector3& v2) const noexcept { return Vector3(XMVectorSubtract(m_vec, v2)); }
 	INLINE Vector3 operator+(const Scalar& v2) const noexcept { return Vector3(XMVectorAdd(m_vec, v2)); }

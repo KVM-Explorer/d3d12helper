@@ -1,5 +1,5 @@
 
-set_languages("cxx23")
+set_languages("cxx20")
 
 target("d3d12helper")
     set_kind("static")
