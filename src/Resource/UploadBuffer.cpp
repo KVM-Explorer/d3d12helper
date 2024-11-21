@@ -1,9 +1,10 @@
 #include "d3d12helper/Resource/UploadBuffer.h"
+#include "d3d12helper/StringHelper.h"
 
 using namespace d3d12helper;
 UploadBuffer::UploadBuffer(
     ID3D12Device *device,
-    uint64 byteSize) :
+    uint64 byteSize, std::string name) :
     Buffer(device),
     byteSize(byteSize)
 {
@@ -16,6 +17,9 @@ UploadBuffer::UploadBuffer(
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(&resource)));
+    if (!name.empty()) {
+        resource->SetName(string2wstring(name).c_str());
+    }
 }
 UploadBuffer::~UploadBuffer()
 {

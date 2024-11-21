@@ -14,15 +14,16 @@ public:
     uint64 GetByteSize() const override { return byteSize; }
     UploadBuffer(
         ID3D12Device *device,
-        uint64 byteSize);
+        uint64 byteSize,
+        std::string name = "");
     ~UploadBuffer();
     void CopyData(uint64 offset, std::span<vbyte const> data) const;
     D3D12_RESOURCE_STATES GetInitState() const override
     {
         return D3D12_RESOURCE_STATE_GENERIC_READ;
     }
-    UploadBuffer(UploadBuffer &&) = default; // Move constructor
-    UploadBuffer(UploadBuffer const &) = delete;  // Copy constructor
+    UploadBuffer(UploadBuffer &&) = default;     // Move constructor
+    UploadBuffer(UploadBuffer const &) = delete; // Copy constructor
     // void DelayDispose(FrameResource *frameRes) const override;
 };
 

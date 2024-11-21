@@ -2,16 +2,15 @@
 #include "d3d12helper/DXMath/DXMath.h"
 #include <cassert>
 
-using namespace d3d12helper;
-D3D12_STATIC_SAMPLER_DESC GetStaticSamplerState(SamplerState samplerState, uint32 shaderRegister,
-                                                uint32 registerSpace, D3D12_SHADER_VISIBILITY visibility)
+D3D12_STATIC_SAMPLER_DESC d3d12helper::GetStaticSamplerState(SamplerState samplerState, uint32 shaderRegister,
+                                                             uint32 registerSpace, D3D12_SHADER_VISIBILITY visibility)
 {
     assert(uint64(samplerState) < uint64(SamplerState::NumValues));
     return ConvertToStaticSampler(SamplerStateDescs[uint64(samplerState)], shaderRegister, registerSpace, visibility);
 }
 
-D3D12_STATIC_SAMPLER_DESC ConvertToStaticSampler(const D3D12_SAMPLER_DESC &samplerDesc, uint32 shaderRegister,
-                                                 uint32 registerSpace, D3D12_SHADER_VISIBILITY visibility)
+D3D12_STATIC_SAMPLER_DESC d3d12helper::ConvertToStaticSampler(const D3D12_SAMPLER_DESC &samplerDesc, uint32 shaderRegister,
+                                                              uint32 registerSpace, D3D12_SHADER_VISIBILITY visibility)
 {
     D3D12_STATIC_SAMPLER_DESC staticDesc = {};
     staticDesc.Filter = samplerDesc.Filter;
