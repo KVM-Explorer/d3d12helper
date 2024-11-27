@@ -88,7 +88,7 @@ Texture::Texture(ID3D12Device *device,
 
         // depth stencil
         if (desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL) {
-            clearValue.Format = desc.Format;
+            clearValue.Format = DXGI_FORMAT_D32_FLOAT;
             clearValue.DepthStencil.Depth = 1.0F;
             clearValue.DepthStencil.Stencil = 0.0F;
         }
