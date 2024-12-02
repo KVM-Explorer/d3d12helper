@@ -23,7 +23,7 @@ public:
     [[nodiscard]] ID3D12DescriptorHeap *Resource() const { return mHeap.Get(); }
 
     uint32_t AddRtvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_RENDER_TARGET_VIEW_DESC *rtvDesc = nullptr);
-    uint32_t AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_DEPTH_STENCIL_VIEW_DESC *srvDesc = nullptr);
+    uint32_t AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_DEPTH_STENCIL_VIEW_DESC *dsvDesc = nullptr);
     uint32_t AddSrvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_SHADER_RESOURCE_VIEW_DESC *srvDesc = nullptr);
     uint32_t AddUavDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_UNORDERED_ACCESS_VIEW_DESC *uavDesc = nullptr);
 
