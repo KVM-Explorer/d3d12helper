@@ -83,3 +83,7 @@ float4x4 MathHelper::Identity4x4() {
 
 	return I;
 }
+
+Math::Vector3 MathHelper::Vec3Max() {
+	return Math::Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
+}

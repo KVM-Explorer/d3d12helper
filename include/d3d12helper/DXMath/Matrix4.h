@@ -80,7 +80,7 @@ namespace Math
 
 		INLINE Vector4 XM_CALLCONV  operator* (const Vector3& vec) const { return Vector4(XMVector3Transform(vec, m_mat)); }
 		INLINE Vector4  XM_CALLCONV operator* (const Vector4& vec) const { return Vector4(XMVector4Transform(vec, m_mat)); }
-		INLINE Matrix4  XM_CALLCONV operator* (const Matrix4& mat) const { return Matrix4(XMMatrixMultiply(mat, m_mat)); }
+		INLINE Matrix4  XM_CALLCONV operator* (const Matrix4& mat) const { return Matrix4(XMMatrixMultiply(m_mat, mat)); }
 
 		static INLINE Matrix4 XM_CALLCONV  MakeScale(float scale) { return Matrix4(XMMatrixScaling(scale, scale, scale)); }
 		static INLINE Matrix4 XM_CALLCONV  MakeScale(const Vector3& scale) { return Matrix4(XMMatrixScalingFromVector(scale)); }

@@ -53,6 +53,8 @@ public:
 	static DirectX::XMMATRIX InverseTranspose(DirectX::CXMMATRIX M);
 
 	static float4x4 Identity4x4();
+	
+	static Math::Vector3 Vec3Max();
 
 	static DirectX::XMVECTOR RandUnitVec3();
 	static DirectX::XMVECTOR RandHemisphereUnitVec3(DirectX::XMVECTOR n);
