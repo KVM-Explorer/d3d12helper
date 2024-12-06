@@ -20,17 +20,26 @@ UploadBuffer::UploadBuffer(
     if (!name.empty()) {
         resource->SetName(string2wstring(name).c_str());
     }
+
+    D3D12_RANGE range;
+    range.Begin = 0;
+    range.End = byteSize;
+    ThrowIfFailed(resource->Map(0, &range, reinterpret_cast<void **>(&mappedAddress)));
 }
 UploadBuffer::~UploadBuffer()
 {
+    resource->Unmap(0, nullptr);
 }
+
 void UploadBuffer::CopyData(uint64 offset, std::span<vbyte const> data) const
 {
     void *mappedPtr;
     D3D12_RANGE range;
     range.Begin = offset;
     range.End = min(byteSize, offset + data.size());
-    ThrowIfFailed(resource->Map(0, &range, reinterpret_cast<void **>(&mappedPtr)));
-    memcpy(reinterpret_cast<vbyte *>(mappedPtr) + offset, data.data(), range.End - range.Begin);
-    resource->Unmap(0, &range);
+    // ThrowIfFailed(resource->Map(0, &range, reinterpret_cast<void **>(&mappedPtr)));
+    // memcpy(reinterpret_cast<vbyte *>(mappedPtr) + offset, data.data(), range.End - range.Begin);
+    // resource->Unmap(0, &range);
+
+    memcpy(reinterpret_cast<vbyte *>(mappedAddress) + offset, data.data(), range.End - range.Begin);
 }
