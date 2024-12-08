@@ -358,6 +358,12 @@ inline bool XM_CALLCONV equal(const Math::Vector2& vec1, const Math::Vector2& ve
 	return abs(diff.x) <= tolerance && abs(diff.y) <= tolerance;
 }
 
+inline float XM_CALLCONV saturate(float value) {
+	if(value < 0.0f) return 0.0f;
+	if(value > 1.0f) return 1.0f;
+	return value;
+}
+
 #ifdef max
 #undef max
 #endif
