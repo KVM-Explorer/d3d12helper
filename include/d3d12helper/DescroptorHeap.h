@@ -3,7 +3,6 @@
 #include <atomic>
 #include <cassert>
 #include <d3d12.h>
-#include <stdatomic.h>
 #include "Utils.h"
 
 namespace d3d12helper {
