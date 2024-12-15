@@ -6,6 +6,11 @@
 
 namespace d3d12helper {
 using TimePoint = std::chrono::high_resolution_clock::time_point;
+using timeunit = std::chrono::milliseconds;
+/**
+ * @brief CPU Timer for performance profiling, unit is ms
+ *
+ */
 class CPUTimer {
 public:
     CPUTimer() = default;
@@ -31,4 +36,4 @@ private:
     std::unordered_map<std::string, uint32_t> mTotalTime;
     std::unordered_map<std::string, std::queue<uint32_t>> mTimeQueue;
 };
-}
+} // namespace d3d12helper
