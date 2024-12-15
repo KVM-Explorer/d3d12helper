@@ -45,7 +45,7 @@ enum class GpuTimers {
  * @details This class is used to measure the time taken by the GPU to execute a command list. so the begin & end must be
             called in the same command list   before command list close. Besides, the resolve all timers must be called
             after the command list is executed. The time is measured in seconds.
-            这个类用于测量GPU执行命令列表所花费的时间，所以begin和end必须在同一个命令列表中调用，然后在命令列表关闭之前调用ResolveAllTimers接口
+            这个类用于测量GPU执行命令列表所花费的时间，所以begin和end必须在同一个命令列表中调用，然后在命令列表关闭并提交执行完毕后调用ResolveAllTimers接口
             读取数据并回写到CPU端。时间单位是秒。
  *
  */
