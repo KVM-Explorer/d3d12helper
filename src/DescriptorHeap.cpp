@@ -1,10 +1,17 @@
 #include "d3d12helper/DescroptorHeap.h"
+#include "d3d12helper/Interface.h"
+#include "d3d12helper/Meta.h"
+#include "d3d12helper/StringHelper.h"
 #include <cassert>
+#include <d3d12.h>
 
 using namespace d3d12helper;
 
 DescriptorHeap::DescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTOR_HEAP_TYPE type, UINT descriptorNum, bool isShaderVisiable) :
-    mDescriptorSize(device->GetDescriptorHandleIncrementSize(type))
+    mDescriptorSize(device->GetDescriptorHandleIncrementSize(type)),
+    mDescriptorMaxNum(descriptorNum),
+    mIsShaderVisiable(isShaderVisiable),
+    mDevice(device)
 {
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
     heapDesc.NumDescriptors = descriptorNum;
@@ -12,18 +19,27 @@ DescriptorHeap::DescriptorHeap(ID3D12Device *device, D3D12_DESCRIPTOR_HEAP_TYPE 
     heapDesc.Flags = isShaderVisiable ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     heapDesc.NodeMask = 0;
 
-    device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&mHeap));
-    mCPUHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mHeap->GetCPUDescriptorHandleForHeapStart());
-    if (isShaderVisiable)
-        mGPUHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(mHeap->GetGPUDescriptorHandleForHeapStart());
-    else
-        mGPUHandle.ptr = 0;
+    if (isShaderVisiable) {
+        mHeapNum = FrameResourceMaxNum;
+    }
+    for (uint32_t i = 0; i < mHeapNum; i++) {
+        mDevice->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&mInstance[i].mHeap));
+        mInstance[i].CPUBaseHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mInstance[i].mHeap->GetCPUDescriptorHandleForHeapStart());
+        if (isShaderVisiable)
+            mInstance[i].GPUBaseHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(mInstance[i].mHeap->GetGPUDescriptorHandleForHeapStart());
+        else
+            mInstance[i].GPUBaseHandle.ptr = 0;
+
+        int heapType = static_cast<int>(type);
+        std::string name = std::string("DescriptorHeap") + "_" + std::to_string(heapType) + "_" + std::to_string(i);
+
+        mInstance[i].mHeap->SetName(string2wstring(name).c_str());
+    }
 }
 
-uint32_t DescriptorHeap::AddRtvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_RENDER_TARGET_VIEW_DESC *rtvDesc)
+uint32_t RTVHeap::AddPersistent(ID3D12Resource *resource, D3D12_RENDER_TARGET_VIEW_DESC *rtvDesc)
 {
-    assert(mPersistentLock == false);
-    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    assert(mPersistentNum < mDescriptorMaxNum);
 
     D3D12_RENDER_TARGET_VIEW_DESC desc;
     if (rtvDesc == nullptr) {
@@ -34,15 +50,14 @@ uint32_t DescriptorHeap::AddRtvDescriptor(ID3D12Device *device, ID3D12Resource *
     } else {
         desc = *rtvDesc;
     }
-    auto cpuHandle = CPUHandle(mDescriptorNum);
-    device->CreateRenderTargetView(resource, &desc, cpuHandle);
-    return mDescriptorNum++;
+    auto cpuHandle = CPUHandle(mPersistentNum);
+    mDevice->CreateRenderTargetView(resource, &desc, cpuHandle);
+    return mPersistentNum++;
 }
 
-uint32_t DescriptorHeap::AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_DEPTH_STENCIL_VIEW_DESC *dsvDesc)
+uint32_t DSVHeap::AddPersistent(ID3D12Resource *resource, D3D12_DEPTH_STENCIL_VIEW_DESC *dsvDesc)
 {
-    assert(mPersistentLock == false);
-    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+    assert(mPersistentNum < mDescriptorMaxNum);
 
     D3D12_DEPTH_STENCIL_VIEW_DESC desc;
     if (dsvDesc == nullptr) {
@@ -53,15 +68,19 @@ uint32_t DescriptorHeap::AddDsvDescriptor(ID3D12Device *device, ID3D12Resource *
     } else {
         desc = *dsvDesc;
     }
-    auto cpuHandle = CPUHandle(mDescriptorNum);
-    device->CreateDepthStencilView(resource, &desc, cpuHandle);
-    return mDescriptorNum++;
+    auto cpuHandle = CPUHandle(mPersistentNum);
+    mDevice->CreateDepthStencilView(resource, &desc, cpuHandle);
+    return mPersistentNum++;
 }
 
-uint32_t DescriptorHeap::AddSrvDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_SHADER_RESOURCE_VIEW_DESC *srvDesc)
+SRVHeap::SRVHeap(ID3D12Device *device, UINT descriptorMaxNum, bool isShaderVisiable) :
+    DescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, descriptorMaxNum, isShaderVisiable)
 {
-    assert(mPersistentLock == false);
-    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    assert(mMaxTemporaryNum <= descriptorMaxNum);
+}
+uint32_t SRVHeap::AddPersistent(ID3D12Resource *resource, D3D12_SHADER_RESOURCE_VIEW_DESC *srvDesc)
+{
+    assert(mPersistentNum < mDescriptorMaxNum - mMaxTemporaryNum);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC desc;
     if (srvDesc == nullptr) {
@@ -75,15 +94,17 @@ uint32_t DescriptorHeap::AddSrvDescriptor(ID3D12Device *device, ID3D12Resource *
     } else {
         desc = *srvDesc;
     }
-    auto cpuHandle = CPUHandle(mDescriptorNum);
-    device->CreateShaderResourceView(resource, &desc, cpuHandle);
-    return mDescriptorNum++;
+    for (int i = 0; i < mHeapNum; i++) {
+        auto cpuHandle = CPUHandle(i, mPersistentNum);
+        mDevice->CreateShaderResourceView(resource, &desc, cpuHandle);
+    }
+
+    return mPersistentNum++;
 }
 
-uint32_t DescriptorHeap::AddUavDescriptor(ID3D12Device *device, ID3D12Resource *resource, D3D12_UNORDERED_ACCESS_VIEW_DESC *uavDesc)
+uint32_t UAVHeap::AddPersistent(ID3D12Resource *resource, D3D12_UNORDERED_ACCESS_VIEW_DESC *uavDesc)
 {
-    assert(mPersistentLock == false);
-    assert(mHeap->GetDesc().Type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    assert(mPersistentNum < mDescriptorMaxNum);
 
     D3D12_UNORDERED_ACCESS_VIEW_DESC desc;
     if (uavDesc == nullptr) {
@@ -94,20 +115,27 @@ uint32_t DescriptorHeap::AddUavDescriptor(ID3D12Device *device, ID3D12Resource *
     } else {
         desc = *uavDesc;
     }
-    auto cpuHandle = CPUHandle(mDescriptorNum);
-    device->CreateUnorderedAccessView(resource, nullptr, &desc, cpuHandle);
-    return mDescriptorNum++;
+    auto cpuHandle = CPUHandle(mPersistentNum);
+    mDevice->CreateUnorderedAccessView(resource, nullptr, &desc, cpuHandle);
+    return mPersistentNum++;
 }
 
-TempDescriptorAllocation DescriptorHeap::AllocateTempSrv(ID3D12Device *device, uint32_t num)
+void SRVHeap::ResetTempDescriptors()
 {
-    assert(mPersistentLock == true);
+    mTempDescriptorIndex[mCurrentIndex] = 0;
+}
+
+TempDescriptorAllocation SRVHeap::AllocTempDescriptors(uint32_t num)
+{
+    assert(mTempDescriptorIndex[mCurrentIndex] + num <= mPersistentNum);
 
     TempDescriptorAllocation ret;
-    auto curIndex = mTempIndex + mDescriptorNum;
+    auto curIndex = mTempDescriptorIndex[mCurrentIndex] + mPersistentNum;
+
     ret.Index = curIndex;
     ret.CPUHandle = CPUHandle(curIndex);
     ret.GPUHandle = GPUHandle(curIndex);
-    mTempIndex += num;
+
+    mTempDescriptorIndex[mCurrentIndex] += num;
     return ret;
 }
