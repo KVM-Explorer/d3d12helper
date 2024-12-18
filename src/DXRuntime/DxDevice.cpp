@@ -1,6 +1,7 @@
 #include "d3d12helper/DXRuntime/DxDevice.h"
 #include "d3d12helper/DXRuntime/DxFactory.h"
 #include "d3d12helper/StringHelper.h"
+#include <iostream>
 
 using namespace d3d12helper;
 
@@ -16,6 +17,7 @@ Device::Device(uint32_t adapterIndex)
         if (i == adapterIndex) {
             std::string name = d3d12helper::wstring2string(std::wstring(adapterDesc.Description));
             OutputDebugStringA(("Adapter: " + name + "\n").c_str());
+            std::cout << std::format("Index: {} Name: {}", adapterIndex, name) << std::endl;
             D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&dxDevice));
             break;
         }
