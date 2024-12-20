@@ -49,16 +49,3 @@ void *ReadbackBuffer::Map()
     isMapped = true;
     return mappedAddress;
 }
-
-void ReadbackBuffer::CopyData(uint64 offset, std::span<vbyte const> data) const
-{
-    void *mappedPtr;
-    D3D12_RANGE range;
-    range.Begin = offset;
-    range.End = min(byteSize, offset + data.size());
-    // ThrowIfFailed(resource->Map(0, &range, reinterpret_cast<void **>(&mappedPtr)));
-    // memcpy(reinterpret_cast<vbyte *>(mappedPtr) + offset, data.data(), range.End - range.Begin);
-    // resource->Unmap(0, &range);
-
-    memcpy(reinterpret_cast<vbyte *>(mappedAddress) + offset, data.data(), range.End - range.Begin);
-}
