@@ -19,6 +19,7 @@ Device::Device(uint32_t adapterIndex)
             OutputDebugStringA(("Adapter: " + name + "\n").c_str());
             std::cout << std::format("Index: {} Name: {}", adapterIndex, name) << std::endl;
             D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&dxDevice));
+            Name = std::format("GPU{} : {}", adapterIndex, name);
             break;
         }
     }

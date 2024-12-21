@@ -6,11 +6,13 @@ class Device {
     IDXGIAdapter1Ptr adapter;
     ComPtr<ID3D12Device> dxDevice;
     IDXGIFactory6Ptr dxgiFactory;
+    std::string Name;
 
 public:
     IDXGIAdapter1 *Adapter() const { return adapter.Get(); }
     ID3D12Device *DxDevice() const { return dxDevice.Get(); }
     IDXGIFactory6 *Factory() const { return dxgiFactory.Get(); }
+    std::string DeviceName() const { return Name; }
     Device(uint32_t adapterIndex = 0);
     ~Device();
 };
