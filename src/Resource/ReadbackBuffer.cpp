@@ -22,10 +22,6 @@ ReadbackBuffer::ReadbackBuffer(
     if (!name.empty()) {
         resource->SetName(string2wstring(name).c_str());
     }
-
-    D3D12_RANGE range;
-    range.Begin = 0;
-    range.End = byteSize;
 }
 
 ReadbackBuffer::~ReadbackBuffer()
@@ -45,7 +41,10 @@ void ReadbackBuffer::Unmap()
 void *ReadbackBuffer::Map()
 {
     assert(!isMapped);
-    ThrowIfFailed(resource->Map(0, nullptr, &mappedAddress));
+    D3D12_RANGE range;
+    range.Begin = 0;
+    range.End = byteSize;
+    ThrowIfFailed(resource->Map(0, &range, &mappedAddress));
     isMapped = true;
     return mappedAddress;
 }
