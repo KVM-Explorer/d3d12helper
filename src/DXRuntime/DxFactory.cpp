@@ -36,7 +36,8 @@ auto DxFactory::GetDeviceInfo() -> std::vector<DeviceInfo>
         if (adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)
             continue;
 
-        DeviceInfo info;
+        DeviceInfo info{};
+        info.adapterIndex = i;
         info.description = adapterDesc.Description;
         devices.push_back(info);
     }
