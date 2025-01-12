@@ -1,5 +1,5 @@
 #include "d3d12helper/GPUTimer.h"
-
+// #include <iostream>
 using namespace d3d12helper;
 
 //-----------------------------------------------------------------------------
@@ -70,8 +70,11 @@ void D3D12GpuTimer::EndTimer(ID3D12GraphicsCommandList *in_pCommandList, std::ui
 void D3D12GpuTimer::ResolveAllTimers(ID3D12GraphicsCommandList *in_pCommandList)
 {
     in_pCommandList->ResolveQueryData(m_heap.Get(), D3D12_QUERY_TYPE_TIMESTAMP, 0, m_totalTimers, m_buffer.Get(), 0);
-    // FIXME? gpu frequency can fluctuate over time. Does this query reflect current clock rate?
+    // FIXME? gpu frequency can fluctuate over time. Does this query reflect current clock rate? according to the experiment, it fixed. but delta time is not fixed 
+    // so delta time means the time between two timestamps,  not current frame time. it is the time last frame time
     d3d12helper::ThrowIfFailed(m_commandQueue->GetTimestampFrequency(&m_gpuFrequency));
+
+    // std::cout << "GPU Frequency: " << m_gpuFrequency << std::endl;
 
     void *pData = nullptr;
     const auto range = CD3DX12_RANGE(0, m_totalTimers);
@@ -87,7 +90,7 @@ void D3D12GpuTimer::ResolveAllTimers(ID3D12GraphicsCommandList *in_pCommandList)
         const float delta = float(deltaTime) / float(m_gpuFrequency);
         const float t = m_times[i].first * (m_averageOver - 1);
         m_times[i].first = (t + delta) / m_averageOver;
-
+        // std::cout << "deltaTime: " << deltaTime << std::endl;
         pTimestamps += 2;
     }
 

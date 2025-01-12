@@ -33,12 +33,6 @@
 #include "d3dx12.h"
 #include "Utils.h"
 namespace d3d12helper {
-enum class GpuTimers {
-    FPS,
-    stage1,
-    stage3,
-    NumTimers
-};
 
 /*
  * @brief Gpu Timer class
