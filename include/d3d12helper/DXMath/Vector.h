@@ -353,8 +353,8 @@ public:
 	INLINE Vector3 operator/(const Vector3& v2) const noexcept { return Vector3(XMVectorDivide(m_vec, v2)); }
 	INLINE Vector3 operator*(const Scalar& v2) const noexcept { return *this * Vector3(v2); }
 	INLINE Vector3 operator/(const Scalar& v2) const noexcept { return *this / Vector3(v2); }
-	INLINE Vector3 operator*(float v2) const noexcept { return *this * Scalar(v2); }
-	INLINE Vector3 operator/(float v2) const noexcept { return *this / Scalar(v2); }
+	INLINE Vector3 operator*(const float v2) const noexcept { return *this * Scalar(v2); }
+	INLINE Vector3 operator/(const float v2) const noexcept { return *this / Scalar(v2); }
 
 	INLINE Vector3& operator+=(const Vector3& v) noexcept {
 		*this = *this + v;
