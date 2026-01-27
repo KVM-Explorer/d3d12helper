@@ -7,10 +7,15 @@ class Device {
     ComPtr<ID3D12Device> dxDevice;
     IDXGIFactory6Ptr dxgiFactory;
     std::string Name;
+    static int adapterCount;
 
 public:
     IDXGIAdapter1 *Adapter() const { return adapter.Get(); }
     ID3D12Device *DxDevice() const { return dxDevice.Get(); }
+
+    static int AdapterCount();
+
+    ComPtr<ID3D12Device> &ComPtrRef() { return dxDevice; }
     IDXGIFactory6 *Factory() const { return dxgiFactory.Get(); }
     std::string DeviceName() const { return Name; }
     Device(uint32_t adapterIndex = 0);

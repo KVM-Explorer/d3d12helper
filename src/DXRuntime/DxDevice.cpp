@@ -5,6 +5,24 @@
 
 using namespace d3d12helper;
 
+int Device::adapterCount = -1;
+
+int Device::AdapterCount()
+{
+    if (adapterCount == -1) {
+        auto instance = DxFactory::GetInstance();
+        auto factory = instance->GetFactory();
+        DXGI_ADAPTER_DESC1 adapterDesc = {};
+        ComPtr<IDXGIAdapter1> adapter;
+        for (UINT i = 0; DXGI_ERROR_NOT_FOUND != factory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter)); i++) {
+            adapter->GetDesc1(&adapterDesc);
+            if (adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE) continue;
+            adapterCount++;
+        }
+    }
+    return adapterCount;
+}
+
 Device::Device(uint32_t adapterIndex)
 {
     auto instance = DxFactory::GetInstance();
