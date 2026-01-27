@@ -10,6 +10,7 @@ int Device::adapterCount = -1;
 int Device::AdapterCount()
 {
     if (adapterCount == -1) {
+        adapterCount = 0;
         auto instance = DxFactory::GetInstance();
         auto factory = instance->GetFactory();
         DXGI_ADAPTER_DESC1 adapterDesc = {};
