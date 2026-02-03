@@ -45,6 +45,14 @@ public:
 		return x < low ? low : (x > high ? high : x);
 	}
 
+	// Returns the angle theta in [0, 2*PI) defined by the vector (x, y).]
+	static float NormalizeAngle(float theta) {
+        float twoPi = 6.28318530718f;
+        theta = fmod(theta, twoPi);
+        if (theta < 0.0f) theta += twoPi;
+        return theta;
+    }
+
 	// Returns the polar angle of the point (x,y) in [0, 2*PI).
 	static float AngleFromXY(float x, float y);
 

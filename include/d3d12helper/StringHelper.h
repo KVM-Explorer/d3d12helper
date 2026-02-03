@@ -1,18 +1,22 @@
 #pragma once
 #include <string>
 #include <sstream>
+#include <codecvt>
+#include <locale>
 namespace d3d12helper {
 static std::wstring string2wstring(std::string str)
 {
-    std::wstring wstr(str.begin(), str.end());
-    return wstr;
+    if (str.empty()) return L"";
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.from_bytes(str);
 }
 
 // 将wstring转换成string
 static std::string wstring2string(std::wstring wstr)
 {
-    std::string str(wstr.begin(), wstr.end());
-    return str;
+    if (wstr.empty()) return "";
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(wstr);
 }
 
 template <std::size_t N>

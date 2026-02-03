@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <string>
 #include <algorithm>
-
 namespace d3d12helper {
 
 // C++17 Check if file exists
@@ -45,6 +44,19 @@ inline std::string ConvertToWindowsPath(const std::string &path)
     std::string ret = path;
     std::replace(ret.begin(), ret.end(), '/', '\\');
     return ret;
+}
+
+inline void PreparePath(const std::string& filePath) {
+    namespace fs = std::filesystem;
+    fs::path p(filePath);
+    
+    // 获取父目录路径 (例如 "logs/v1/test.json" -> "logs/v1")
+    fs::path dir = p.parent_path();
+
+    // 如果目录不为空且不存在，则递归创建所有级别的目录
+    if (!dir.empty() && !fs::exists(dir)) {
+        fs::create_directories(dir); 
+    }
 }
 
 } // namespace d3d12helper
