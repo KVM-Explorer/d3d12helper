@@ -21,6 +21,18 @@ inline std::string GetCurrentPath()
     return std::filesystem::current_path().string();
 }
 
+inline std::string GetFileName(const std::string &path)
+{
+    std::filesystem::path p(path);
+    return p.filename().string();
+}
+
+inline std::string GetFileNameOnly(const std::string &path)
+{
+    std::filesystem::path p(path);
+    return p.filename().stem().string();
+}
+
 /// return file extension in uppercase (e.g. "DDS")
 inline std::string GetFileExtension(const std::string &path)
 {
@@ -32,6 +44,8 @@ inline std::string GetFileExtension(const std::string &path)
     std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
     return ret;
 }
+
+
 
 inline std::string GetFileDirectory(const std::string &path)
 {
