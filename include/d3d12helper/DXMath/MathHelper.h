@@ -90,6 +90,46 @@ public:
         return MathHelper::NormalizeAngle(result);
     }
 
+    /**
+     * @brief 基于标准四方向的余弦平方加权插值
+     * @param a 采样点A的角度 (弧度, [0, 2pi))
+     * @param b 采样点B的角度 (弧度, [0, 2pi))
+     * @param t 当前相机的角度 (弧度, [0, 2pi))
+     * @param v1 采样点A的性能值 (gpuMS)
+     * @param v2 采样点B的性能值 (gpuMS)
+     */
+    template <typename T>
+    static T CosineWeightedLerp(T a, T b, T t, T v1, T v2)
+    {
+        // 1. 计算最短角距离 (Handle 0/2pi wrap-around)
+        auto get_shortest_diff = [](T target, T source) {
+            T diff = target - source;
+            // 快速分支预测：处理跨越 0/2pi 边界的情况
+            if (diff > MathHelper::Pi) diff -= 2 * MathHelper::Pi;
+            if (diff < -MathHelper::Pi) diff += 2 * MathHelper::Pi;
+            return std::abs(diff);
+        };
+
+        T d1 = get_shortest_diff(t, a);
+        T d2 = get_shortest_diff(b, t);
+
+        // 2. 计算权重 (基于 Cosine-Squared)
+        // 在标准 90 度间隔下，cos(d1)^2 + cos(d2)^2 理论上等于 1
+        T cos1 = std::cos(d1);
+        T cos2 = std::cos(d2);
+
+        T w1 = cos1  ;
+        T w2 = cos2  ;
+
+        // 3. 归一化处理
+        // 虽理论和等于1，但考虑到浮点数精度及 t 可能由于精度微调稍微超出 [a,b] 区间，
+        // 进行显式归一化能保证预测值的极值稳定性。
+        T sum = w1 + w2;
+        if (sum < 1e-6f) return (v1 + v2) * static_cast<T>(0.5);
+
+        return (w1 * v1 + w2 * v2) / sum;
+    }
+
     // Returns the polar angle of the point (x,y) in [0, 2*PI).
     static float AngleFromXY(float x, float y);
 
