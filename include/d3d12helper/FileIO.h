@@ -53,6 +53,18 @@ inline std::string GetFileDirectory(const std::string &path)
     return p.parent_path().string();
 }
 
+inline std::string GetParentDirectory(const std::string &path)
+{
+    std::filesystem::path p(path);
+    return p.parent_path().string();
+}
+inline std::string JoinPath(const std::string &path1, const std::string &path2)
+{
+    std::filesystem::path p1(path1);
+    std::filesystem::path p2(path2);
+    return (p1 / p2).string();
+}
+
 inline std::string ConvertToWindowsPath(const std::string &path)
 {
     std::string ret = path;
